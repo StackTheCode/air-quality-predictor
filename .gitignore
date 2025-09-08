@@ -1,0 +1,7 @@
+.env
+__pycache__/
+*.pyc
+*.pkl
+.DS_Store
+notebooks/.ipynb_checkpoints/
+models/saved_models/*.pkl
