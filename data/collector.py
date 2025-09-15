@@ -64,16 +64,16 @@ def get_air_quality(city,country_code):
       }
     
         
-if __name__ == "__main__":
-    # Example test
-    try:
-        print("Testing weather API...")
-        weather = get_weather("London", "GB")
-        print("Weather data:", weather)
+# if __name__ == "__main__":
+#     # Example test
+#     try:
+#         print("Testing weather API...")
+#         weather = get_weather("London", "GB")
+#         print("Weather data:", weather)
         
-        print("\nTesting air quality API...")
-        air = get_air_quality("London", "GB")
-        print("Air quality data:", air)
+#         print("\nTesting air quality API...")
+#         air = get_air_quality("London", "GB")
+#         print("Air quality data:", air)
         
-    except Exception as e:
-        print(f"❌ Error: {e}")
+#     except Exception as e:
+#         print(f"❌ Error: {e}")

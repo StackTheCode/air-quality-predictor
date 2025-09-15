@@ -26,3 +26,12 @@ CREATE TABLE IF NOT EXISTS weather_data_table (
 );
 
 
+CREATE TABLE IF NOT EXISTS predictions (
+    id SERIAL PRIMARY KEY,
+    timestamp TIMESTAMP NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    predicted_aqi INTEGER,
+    confidence_score FLOAT,
+    model_version VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

@@ -1,20 +1,25 @@
 import streamlit as st
 import sys
 import os
+from datetime import datetime
 
 from data.database_manager import store_air_quality_data, store_weather_data
+from models.predictor import AirQualityModel
+from data.database_manager import store_prediction
 
 # Add the project root to Python path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 st.set_page_config(
-    page_title="Air Quality Predictor", 
+    page_title="Air Quality Indicator", 
     page_icon="🌬️",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
+    
 )
 
-st.title("🌬️ Air Quality Predictor")
-st.write("Predicting air quality for better health decisions")
+st.title("🌬️ Air Quality Indicator")
+st.write("Search for your city to get air quality info!")
 
 # Test database connection
 try:
@@ -73,7 +78,7 @@ try:
     
     elif weather_data and air_data:
         # Display real data
-        col1, col2, col3 = st.columns(3)
+        col1, col2, col3,col4 = st.columns(4)
         
         with col1:
             aqi_levels = {1: "Good", 2: "Fair", 3: "Moderate", 4: "Poor", 5: "Very Poor"}
@@ -89,6 +94,38 @@ try:
             temp = weather_data["weather"]["temperature"]
             st.metric("Temperature", f"{temp:.1f}°C")
         
+        with col4:
+            try:
+             predictor = AirQualityModel()
+             now = datetime.now()
+             pred_pm25,confidence =predictor.predict_with_confidence(
+                 temperature=weather_data["weather"]["temperature"],
+                humidity=weather_data["weather"]["humidity"],
+                pressure=weather_data["weather"]["pressure"],
+                wind_speed=weather_data["weather"]["wind_speed"],
+                hour=now.hour,
+                day_of_week=now.weekday()
+             )
+             def pm25_to_category(value):
+                if value <= 12: return "🟢 Good"
+                elif value <= 35: return "🟡 Moderate"
+                elif value <= 55: return "🟠 Unhealthy (Sensitive)"
+                elif value <= 150: return "🔴 Unhealthy"
+                else: return "🟣 Very Unhealthy"
+             st.metric("Predicted PM2.5", f"{pred_pm25:.1f} μg/m³", pm25_to_category(pred_pm25))
+                  
+             features = {
+               "temperature": weather_data["weather"]["temperature"],
+                "humidity": weather_data["weather"]["humidity"],
+                "pressure": weather_data["weather"]["pressure"],
+                "wind_speed": weather_data["weather"]["wind_speed"],
+                "hour": now.hour,
+                "day_of_week": now.weekday(),
+        }
+             store_prediction(city, pred_pm25,confidence_score=confidence)
+
+            except Exception as e:
+                 st.warning(f"Prediction unavailable: {e}")
         # Additional data in expandable section
         with st.expander("📊 Detailed Information"):
             col_weather, col_air = st.columns(2)

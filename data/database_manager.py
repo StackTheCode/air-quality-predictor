@@ -3,13 +3,34 @@ import os
 import pandas as pd
 from datetime import datetime
 from sqlalchemy import text
-
 # Add the project root to Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Now imports will work
 from config.database import get_engine
 from data.collector import get_weather, get_air_quality
+
+
+def store_prediction(city, predicted_pm25, model_version="RandomForest_v1",confidence_score=None):
+    """
+    Insert prediction into the predictions table
+    """
+    engine = get_engine()
+    now = datetime.now()
+
+    query = text("""
+        INSERT INTO predictions (timestamp, city, predicted_aqi, confidence_score, model_version)
+        VALUES (:timestamp, :city, :predicted_aqi, :confidence_score, :model_version)
+    """)
+
+    with engine.begin() as conn:
+        conn.execute(query, {
+            "timestamp": now,
+            "city": city,
+            "predicted_aqi": int(predicted_pm25),   # store rounded AQI
+            "confidence_score": float(confidence_score) if confidence_score is not None else None,              # placeholder (can add later)
+            "model_version": model_version
+        })
 
 def store_air_quality_data(city, country_code="GB"):
     """Store current air quality data in database"""

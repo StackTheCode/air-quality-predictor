@@ -1,0 +1,1 @@
+temperature,humidity,pressure,wind_speed,hour,day_of_week
