@@ -1,0 +1,15 @@
+{
+  "trained_at": "2025-09-15T21:01:29.906077",
+  "n_estimators": 50,
+  "max_depth": 8,
+  "oob_score": 0.18771932390440627,
+  "features": [
+    "temperature",
+    "humidity",
+    "pressure",
+    "wind_speed",
+    "hour",
+    "day_of_week"
+  ],
+  "training_samples": 6
+}
