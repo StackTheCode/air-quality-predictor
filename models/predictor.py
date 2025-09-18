@@ -4,28 +4,32 @@ import os
 import json
 from datetime import datetime
 
-MODEL_DIR = os.path.join("models", "saved_models")
+
 
 class AirQualityModel:
     def __init__(self):
-        model_path = os.path.join(MODEL_DIR, "air_quality_model.pkl")
-        scaler_path = os.path.join(MODEL_DIR, "feature_scaler.pkl")
-        features_path = os.path.join(MODEL_DIR, "feature_names.txt")
-        stats_path = os.path.join(MODEL_DIR, "training_stats.json")
+        base_dir= os.path.dirname(os.path.abspath(__file__))
+        model_dir = os.path.join(base_dir, "saved_models") 
+        
+        
+        model_path = os.path.join(model_dir, "air_quality_model.pkl")
+        scaler_path = os.path.join(model_dir, "feature_scaler.pkl")
+        features_path = os.path.join(model_dir, "feature_names.txt")
+        stats_path = os.path.join(model_dir, "training_stats.json")
         
         self.model = joblib.load(model_path)
         self.scaler = joblib.load(scaler_path)
         
-        with open(features_path, "r") as f:
-            self.feature_names = f.read().split(",")
+      
         
         # Load training statistics for better confidence calculation
         try:
+            with open(features_path, "r") as f:
+                self.feature_names = f.read().strip().split(",")    
             with open(stats_path, "r") as f:
-                self.training_stats = json.load(f)
-        except FileNotFoundError:
-            print("⚠️ Training stats not found. Confidence may be less accurate.")
-            self.training_stats = {}
+                self.training_stats = json.load(f)    
+        except (FileNotFoundError, OSError, EOFError) as e:
+            raise FileNotFoundError(f"Model files not found or corrupted in {model_dir}. Please ensure all model files are present.")
     
     def predict(self, temperature, humidity, pressure, wind_speed, hour, day_of_week):
         """Simple prediction without confidence"""
