@@ -31,7 +31,7 @@ wheels/
 notebooks/
 scripts/
 trainer.py
-setup_db
+setup_db.py
 
 # IDE files
 .vscode/
