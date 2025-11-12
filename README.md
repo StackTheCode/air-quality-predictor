@@ -1,6 +1,6 @@
 🌬️ Air Quality Predictor
 
-This is a small web app that helps you check and predict the air quality (AQI) in different cities.
+This is a  web app that helps you check and predict the air quality (AQI) in different cities.
 It combines live weather and pollution data with a machine learning model I trained, so you can see not just the current AQI, but also a predicted value with a confidence score.
 
 The app is built with Streamlit for the UI, uses PostgreSQL to store historical data, and a RandomForest model (from scikit-learn) for predictions.
